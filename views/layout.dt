@@ -1,0 +1,35 @@
+!!! 5
+html(lang="ja")
+	head
+		meta(charset="UTF-8")
+
+		- string title;
+
+		block title
+
+		- if (title.length > 0)
+			title #{ title } - Novluno
+		- else
+			title Novluno
+
+	body
+		ul
+			- import novluno.config : config;
+
+			li
+				a(href=config.gateway.path) ホーム
+			li
+				a(href=Path(config.gateway.path) ~ PathEntry("index")) 一覧
+			li
+				a(href=Path(config.gateway.path) ~ PathEntry("recent")) 新着情報
+			li
+				a(href=Path(config.gateway.path) ~ PathEntry("new")) 新規作成
+			li
+				a(href=Path(config.gateway.path) ~ PathEntry("status")) 状態
+
+		- if (title.length > 0)
+			h1 #{ title }
+		- else
+			h1 Novluno
+
+		block body

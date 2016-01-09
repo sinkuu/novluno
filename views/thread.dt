@@ -1,0 +1,50 @@
+extends layout
+
+block title
+	- import std.algorithm : skipOver;
+	- import std.exception : enforce;
+	- import novluno.cache : decodeTitle;
+	- title = filename;
+	- enforce(title.skipOver("thread_"));
+	- title = decodeTitle(title);
+
+block body
+
+	div#thread_post
+		- import novluno.config : config;
+
+		form(action=Path(config.gateway.path) ~ PathEntry("thread") ~ PathEntry(title), method="post")
+			input(type="hidden", name="filename", value=filename)
+
+			p
+				| 名前:
+				input(type="text", name="name", tabindex="1")
+				| メールアドレス:
+				input(type="text", name="mail", tabindex="2")
+				input(type="submit", value="書き込む", tabindex="4")
+
+			p
+				textarea(name="body", cols=80, tabindex="3")
+
+	ul#thread
+		- import std.datetime : SysTime, unixTimeToStdTime;
+		- foreach (r; records)
+			li.record
+				article
+					div.record-head
+						span.record-id #{ r.head.id[0..8] }.
+
+						span :
+
+						- if (r.name.empty)
+							span.record-name 名無しさん
+						- else
+							span.record-name #{ r.name.get }
+
+						span.record-mail [#{ r.mail.getOrElse("") }]
+
+						span.record-stamp #{ SysTime(unixTimeToStdTime(r.head.stamp)).toString() }
+
+					div.record-body
+						pre
+							|= r.body_.replace("<br>", "\n").replace("&lt;", "<").replace("&gt;", ">").replace("&quot;", "\"").replace("&amp;", "&")

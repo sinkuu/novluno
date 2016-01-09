@@ -1,0 +1,18 @@
+extends layout
+
+block title
+	- title = "最近の更新";
+
+block body
+	ul
+		- import std.datetime : SysTime, unixTimeToStdTime;
+		- import novluno.cache : decodeTitle;
+		- import novluno.config : config;
+		- import std.algorithm : skipOver;
+		- import std.range : retro;
+
+		- foreach (h; heads.retro)
+			- if (h.filename.skipOver("thread_"))
+				li #{ SysTime(unixTimeToStdTime(h.stamp)).toString() } - 
+					- auto t = decodeTitle(h.filename);
+					a(href=Path(config.gateway.path) ~ PathEntry("thread") ~ PathEntry(t)) #{ t }
